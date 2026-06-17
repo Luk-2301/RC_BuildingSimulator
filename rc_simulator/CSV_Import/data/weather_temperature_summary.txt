@@ -1,51 +1,51 @@
 Weather temperature summary
-Source file: F:\Backup_project1\20260527_RC_Refurbishment_f2\RC_BuildingSimulator\rc_simulator\CSV_Import\data\weatherData.prn
+Source file: F:\Backup_project1\20260527_RC_Base_f2_woNT\RC_BuildingSimulator\rc_simulator\CSV_Import\data\weatherData.prn
 
-Min temperature [°C]: -10.75
+Min temperature [°C]: -10.77
 Min occurs at HOY: 122
 Min occurs at date-time: 2015-01-06 01:00
 
-Mean temperature [°C]: 10.11
+Mean temperature [°C]: 9.95
 
-Max temperature [°C]: 27.91
-Max occurs at HOY: 4312
-Max occurs at date-time: 2015-06-29 15:00
+Max temperature [°C]: 29.15
+Max occurs at HOY: 4816
+Max occurs at date-time: 2015-07-20 15:00
 
 Degree-day values [K*d]:
-Heizgradtage (Basis 15.0 °C): 2198.74
+Heizgradtage (Basis 15.0 °C): 2244.86
 Kuehlgradtage (Basis 25.0 °C): 0.00
 
 Monthly radiation summary [kWh/Monat]
 Month | Direct | Diffuse | Total | Direct[%] | Diffuse[%]
-Jan |     7.5 |    22.3 |    29.8 |     25.2 |      74.8
-Feb |    17.2 |    32.5 |    49.8 |     34.6 |      65.4
-Mar |    38.5 |    56.1 |    94.6 |     40.7 |      59.3
-Apr |    59.0 |    72.9 |   131.9 |     44.7 |      55.3
-May |    66.4 |    89.8 |   156.2 |     42.5 |      57.5
-Jun |    82.3 |    92.7 |   175.0 |     47.0 |      53.0
-Jul |    85.9 |    90.9 |   176.8 |     48.6 |      51.4
-Aug |    68.7 |    79.6 |   148.3 |     46.3 |      53.7
-Sep |    50.8 |    58.1 |   108.9 |     46.6 |      53.4
-Oct |    26.2 |    42.2 |    68.4 |     38.3 |      61.7
-Nov |    11.1 |    24.9 |    35.9 |     30.8 |      69.2
-Dec |     7.1 |    18.4 |    25.5 |     27.8 |      72.2
+Jan |     8.1 |    22.4 |    30.5 |     26.5 |      73.5
+Feb |    17.9 |    32.4 |    50.3 |     35.7 |      64.3
+Mar |    39.5 |    55.9 |    95.5 |     41.4 |      58.6
+Apr |    60.3 |    71.8 |   132.1 |     45.7 |      54.3
+May |    68.9 |    88.2 |   157.1 |     43.9 |      56.1
+Jun |    84.9 |    91.2 |   176.1 |     48.2 |      51.8
+Jul |    88.0 |    90.6 |   178.6 |     49.3 |      50.7
+Aug |    70.2 |    77.5 |   147.7 |     47.5 |      52.5
+Sep |    54.3 |    58.8 |   113.1 |     48.0 |      52.0
+Oct |    27.2 |    41.9 |    69.2 |     39.4 |      60.6
+Nov |    12.3 |    24.8 |    37.1 |     33.0 |      67.0
+Dec |     7.6 |    18.5 |    26.1 |     29.1 |      70.9
 
 Yearly radiation sums [kWh/Jahr]
-Direct yearly sum: 520.7
-Diffuse yearly sum: 680.4
-Total yearly sum: 1201.1
+Direct yearly sum: 539.3
+Diffuse yearly sum: 674.1
+Total yearly sum: 1213.4
 
 Monthly temperature summary [°C]
 Month | Min | Mean | Max
 Jan |  -10.8 |    1.1 |   13.8
-Feb |   -9.5 |    1.7 |   13.0
-Mar |   -4.5 |    5.3 |   16.6
-Apr |   -1.4 |    9.7 |   20.3
-May |    5.2 |   13.7 |   22.8
-Jun |    7.7 |   17.8 |   27.9
-Jul |   12.3 |   19.6 |   27.7
-Aug |   10.2 |   18.7 |   26.9
-Sep |    5.0 |   14.9 |   26.2
-Oct |    1.9 |   10.6 |   21.6
-Nov |   -4.8 |    5.3 |   16.6
-Dec |   -9.4 |    2.3 |   13.1
+Feb |   -9.6 |    1.6 |   12.9
+Mar |   -7.4 |    5.0 |   15.8
+Apr |   -2.8 |    9.5 |   20.6
+May |    2.8 |   13.5 |   23.7
+Jun |    8.1 |   17.6 |   27.6
+Jul |    7.8 |   19.4 |   29.1
+Aug |   11.5 |   18.4 |   27.6
+Sep |    5.5 |   14.8 |   25.7
+Oct |    1.1 |   10.4 |   23.3
+Nov |   -4.9 |    5.2 |   16.4
+Dec |   -7.0 |    2.2 |    9.8
