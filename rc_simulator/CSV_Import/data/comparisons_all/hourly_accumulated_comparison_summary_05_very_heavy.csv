@@ -1,0 +1,2 @@
+hours_compared,mae_kwh_h,rmse_kwh_h,bias_kwh_h,corr,annual_rc_kwh,annual_simstadt_kwh,annual_diff_kwh,annual_diff_pct,annual_rc_cooling_kwh,annual_simstadt_cooling_kwh,annual_diff_cooling_kwh,annual_diff_cooling_pct,annual_rc_cooling_mwh,annual_simstadt_cooling_mwh,annual_diff_cooling_mwh
+8760,298.77408993077404,541.6259148531785,-109.74932375023731,0.8314712757654643,5695360.723947921,6656764.800000001,-961404.0760520799,-14.442512315473122,641067.6499898644,2301272.0,-1660204.3500101357,-72.14289966636433,641.0676499898644,2301.272,-1660.2043500101356
