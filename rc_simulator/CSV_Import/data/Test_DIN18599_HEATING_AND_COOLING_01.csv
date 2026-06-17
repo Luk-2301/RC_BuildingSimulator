@@ -1,0 +1,25 @@
+## SimStadt DIN18599 Monthly Energy Balance;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Weather data source;beispiel.109;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Location;N49_8__W9_9;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Coordinate reference system;EPSG:25832;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Latitude;49,8;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Longitude;-9,9;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Radiation model;beispiel.109;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Calculation Mode;HEATING_AND_COOLING;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Consumer behaviour;IWU_NUTZUNG;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Building physics library;German Building Typology Library IWU (with GEG/BEG) (http://www.iwu.de);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Building usage library;Germany (based on UsageLibrary.xlsx, sheet: Germany);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Has custom building usage codes?;false;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# SimStadt version;0.14.0-SNAPSHOT (develop, rev. 3e2b356, 20260129);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Created at;13.05.2026 17:00;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Heating in MWh/a;;;;;;;;;;;;;;;;;;;;;;;;;;;
+# Cache version;7;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;7360,117;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+GMLId;ParentGMLId;Latitude;Longitude;X-coordinate;Y-coordinate;LOD;Year of construction;Year of refurbishment;Refurbishment Variant;ALKIS code;PrimaryUsageZoneType;PrimaryUsageZoneArea;SecondaryUsageZoneType;SecondaryUsageZoneArea;BuildingType;Footprint area;Total wall thermal area above ground;Total wall thermal area below ground;Total outwall area;Total shared wall area;Total roof area;Gross volume;Is Gross volume approximated?;Heated volume;Ridge/mean Height;Eaves/mean Height;Storey number;Average Storey Height;Number of households;Number of occupants;Attic Heating;Basement Heating;Basement ceiling height above ground;Surface area to volume ratio;Heated area;Mean Uvalue;Specific domestic hot water demand;Domestic hot water demand;Specific space heating demand;Yearly Heating demand;Total Yearly Heating + DHW demand;January Heating demand;February Heating demand;March Heating demand;April Heating demand;May Heating demand;June Heating demand;July Heating demand;August Heating demand;September Heating demand;October Heating demand;November Heating demand;December Heating demand;Specific space Cooling demand;Yearly Cooling demand;January Cooling demand;February Cooling demand;March Cooling demand;April Cooling demand;May Cooling demand;June Cooling demand;July Cooling demand;August Cooling demand;September Cooling demand;October Cooling demand;November Cooling demand;December Cooling demand
+[-];[-];[°];[°];[?];[?];LOD;[YYYY];[YYYY];[-];[-];[-];[m²];[-];[m²];[-];[m²];[m²];[m²];[m²];[m²];[m²];[m³];[0/1];[m³];[m];[m];[-];[m];[-];[-];[-];[-];[m];[m?¹];[m²];[W/(m²·K)];[kWh/(m²·a)];[kWh/a];[kWh/(m²·a)];[kWh/a];[kWh/a];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh/(m²·a)];[kWh/a];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh];[kWh]
+DEBW_00000001aab;0;49,8;-9,9;515545,03;5401894,62;LOD_2;1980;;Original;31001_2082;residential;242;none;0;EFH;121;220;0;220;0;121;605;false;605;0;0;2;2,5;0;2;HEATED;HEATED;0;0;242;1,12;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+DEBW_00000002aac;0;49,8;-9,9;515545,03;5401894,62;LOD_2;1980;;Original;31001_2083;residential;242;none;0;EFH;121;220;0;220;0;121;605;false;605;0;0;2;2,5;0;2;HEATED;HEATED;0;0;242;1,12;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+DEBW_00000003aad;0;49,8;-9,9;515545,03;5401894,62;LOD_2;2020;;Original;31001_2084;residential;242;none;0;EFH;121;220;0;220;0;121;605;false;605;0;0;2;2,5;0;2;HEATED;HEATED;0;0;242;0,28;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+DEBW_00000004aae;0;49,8;-9,9;515545,03;5401894,62;LOD_2;2020;;Original;31001_2085;residential;242;none;0;EFH;121;220;0;220;0;121;605;false;605;0;0;2;2,5;0;2;HEATED;HEATED;0;0;242;0,28;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
