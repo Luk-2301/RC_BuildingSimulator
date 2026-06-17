@@ -1,5 +1,5 @@
 Weather temperature summary
-Source file: F:\Backup_project1\20260527_RC_Refurbishment_f2\RC_BuildingSimulator\rc_simulator\CSV_Import\data\weatherData.prn
+Source file: F:\Backup_project1\20260527_RC_Refurbishment_f2_woNT\RC_BuildingSimulator\rc_simulator\CSV_Import\data\weatherData.prn
 
 Min temperature [°C]: -10.75
 Min occurs at HOY: 122
