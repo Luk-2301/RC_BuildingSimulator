@@ -7,6 +7,7 @@ Tool to Evaluate Radiation incident on a surface of a set angle
 import pandas as pd
 import math
 import datetime
+from pathlib import Path
 
 
 __authors__ = "Prageeth Jayathissa"
@@ -19,10 +20,77 @@ __email__ = "p.jayathissa@gmail.com"
 __status__ = "production"
 
 
+EPW_LABELS = ['year', 'month', 'day', 'hour', 'minute', 'datasource', 'drybulb_C', 'dewpoint_C', 'relhum_percent',
+              'atmos_Pa', 'exthorrad_Whm2', 'extdirrad_Whm2', 'horirsky_Whm2', 'glohorrad_Whm2',
+              'dirnorrad_Whm2', 'difhorrad_Whm2', 'glohorillum_lux', 'dirnorillum_lux', 'difhorillum_lux',
+              'zenlum_lux', 'winddir_deg', 'windspd_ms', 'totskycvr_tenths', 'opaqskycvr_tenths', 'visibility_km',
+              'ceiling_hgt_m', 'presweathobs', 'presweathcodes', 'precip_wtr_mm', 'aerosol_opt_thousandths',
+              'snowdepth_cm', 'days_last_snow', 'Albedo', 'liq_precip_depth_mm', 'liq_precip_rate_Hour']
+
+
+def _finalize_weather_dataframe(frame):
+    frame['ambient_temperature'] = pd.to_numeric(frame['ambient_temperature'], errors='coerce')
+    frame['direct_radiation'] = pd.to_numeric(frame['direct_radiation'], errors='coerce')
+    frame['diffuse_radiation'] = pd.to_numeric(frame['diffuse_radiation'], errors='coerce')
+    frame['total_radiation'] = frame['direct_radiation'].fillna(0.0) + frame['diffuse_radiation'].fillna(0.0)
+    frame = frame.dropna(subset=['ambient_temperature']).reset_index(drop=True)
+    return frame
+
+
+def _load_trnsys_109(weather_file_path):
+    data_start_line = None
+    with open(weather_file_path, 'r', encoding='utf-8', errors='replace') as weather_file:
+        for line_number, line in enumerate(weather_file):
+            if line.strip().lower() == '<data>':
+                data_start_line = line_number + 1
+                break
+
+    if data_start_line is None:
+        raise ValueError(f"Missing <data> marker in weather file: {weather_file_path}")
+
+    raw = pd.read_csv(
+        weather_file_path,
+        sep=r'\s+',
+        header=None,
+        skiprows=data_start_line,
+        engine='python',
+        encoding='latin-1'
+    )
+
+    if raw.shape[1] < 6:
+        raise ValueError(f"Expected at least 6 columns in .109 weather data: {weather_file_path}")
+
+    parsed = pd.DataFrame({
+        'ambient_temperature': raw.iloc[:, 2],
+        'direct_radiation': raw.iloc[:, 4],
+        'diffuse_radiation': raw.iloc[:, 5],
+    })
+    return _finalize_weather_dataframe(parsed)
+
+
+def load_weather_data(weather_file_path):
+    weather_path = Path(weather_file_path)
+    suffix = weather_path.suffix.lower()
+
+    if suffix == '.109':
+        return _load_trnsys_109(weather_path)
+
+    # Legacy SimStadt weatherData.prn layout:
+    # direct_radiation diffuse_radiation ambient_temperature
+    legacy = pd.read_csv(
+        weather_path,
+        sep=r'\s+',
+        header=None,
+        names=['direct_radiation', 'diffuse_radiation', 'ambient_temperature']
+    )
+    return _finalize_weather_dataframe(legacy)
+
+
 class Location(object):
     """Set weather context for the simulation."""
 
     def __init__(self, weather_file_path=None, epwfile_path=None):
+<<<<<<< Updated upstream
 
         self.weather_data = pd.DataFrame()
 
@@ -48,6 +116,20 @@ class Location(object):
         if epwfile_path:
             self.weather_data = pd.read_csv(
                 epwfile_path, skiprows=8, header=None, names=epw_labels).drop('datasource', axis=1)
+=======
+
+        self.weather_data = pd.DataFrame()
+
+        # Preferred input: SimStadt weatherData.prn (direct, diffuse, ambient temperature)
+        if weather_file_path:
+            self.weather_data = load_weather_data(weather_file_path)
+            return
+
+        # Backward compatibility: EPW input remains available if provided.
+        if epwfile_path:
+            self.weather_data = pd.read_csv(
+                epwfile_path, skiprows=8, header=None, names=EPW_LABELS).drop('datasource', axis=1)
+>>>>>>> Stashed changes
 
     def calc_sun_position(self, latitude_deg, longitude_deg, year, hoy):
         """

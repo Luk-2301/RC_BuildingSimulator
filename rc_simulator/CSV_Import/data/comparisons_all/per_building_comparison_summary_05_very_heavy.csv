@@ -1,0 +1,2 @@
+matched_buildings,mean_mae_kwh_h,mean_rmse_kwh_h,mean_bias_kwh_h,mean_corr,sum_annual_rc_kwh,sum_annual_simstadt_kwh,sum_annual_diff_kwh,sum_annual_rc_cooling_kwh,sum_annual_simstadt_cooling_kwh,sum_annual_diff_cooling_kwh
+4,0.17513138762196145,0.4319177557885484,0.0641123769490126,0.9766519494996595,65531.27645628374,63284.778767990334,2246.497688293399,4789.277951088574,8480.679706800924,-3691.4017557123498
