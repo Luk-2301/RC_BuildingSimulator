@@ -18,6 +18,7 @@ __status__ = "production"
 
 
 # This is one layer of abstraction too many, however it is kept for future explansion of the supply system
+#Currently disabled in the main workflow; keep this module for later reuse.
 class SupplyDirector:
 
     """

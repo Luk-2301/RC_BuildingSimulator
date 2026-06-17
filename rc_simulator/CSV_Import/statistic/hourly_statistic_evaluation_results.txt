@@ -1,0 +1,23 @@
+Hourly Statistical Evaluation Report
+
+Matched buildings used: 205
+SimStadt matched hourly output: simstadt_hourly_accumulated_matched.csv
+
+Comparison                                     Heat MAE   Heat RMSE   Heat Corr
+-------------------------------------------  ----------  ----------  ----------
+SimStadt - very light                            163.51      314.40        0.69
+SimStadt - very light (just_heating_period)      281.51      412.53        0.62
+SimStadt - light                                 156.27      296.04        0.71
+SimStadt - light (just_heating_period)           269.05      388.45        0.65
+SimStadt - medium                                142.71      267.79        0.74
+SimStadt - medium (just_heating_period)          245.70      351.37        0.68
+SimStadt - heavy                                 128.85      242.82        0.77
+SimStadt - heavy (just_heating_period)           221.85      318.62        0.72
+SimStadt - very heavy                            121.67      230.69        0.79
+SimStadt - very heavy (just_heating_period)      209.47      302.70        0.74
+
+Notes:
+MAE, RMSE, and correlation are computed over the 8760 aligned hourly points for each variant.
+Additional metrics labeled '(just_heating_period)' are computed only for hours with day-of-year outside 121..273 (inclusive).
+SimStadt heating is aggregated from the matched per-building hourly PRN files.
+Cooling logic has been removed for now and can be reintroduced when hourly SimStadt cooling data is available.

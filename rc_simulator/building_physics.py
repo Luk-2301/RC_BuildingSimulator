@@ -60,7 +60,8 @@ INPUT PARAMETER DEFINITION
     ventilation_efficiency: The efficiency of the heat recovery system for ventilation. Set to 0 if there is no heat
         recovery []
     thermal_capacitance_per_floor_area: Thermal capacitance of the room per floor area [J/m2K]
-    t_set_heating : Thermal heating set point [C]
+    t_set_heating_day : Thermal heating set point [C]
+    t_set_heating_night: Thermal heating set point [C]
     t_set_cooling: Thermal cooling set point [C]
     max_cooling_energy_per_floor_area: Maximum cooling load. Set to -np.inf for unrestricted cooling [C]
     max_heating_energy_per_floor_area: Maximum heating load per floor area. Set to no.inf for unrestricted heating [C]
@@ -75,7 +76,7 @@ INPUT PARAMETER DEFINITION
 
 """
 
-import supply_system
+# import supply_system
 import emission_system
 
 __authors__ = "Prageeth Jayathissa"
@@ -97,6 +98,7 @@ class Zone(object):
                  floor_area=35.0,
                  room_vol=105,
                  total_internal_area=142.0,
+                 average_storey_height=2.5,
                  lighting_load=11.7,
                  lighting_control=300.0,
                  lighting_utilisation_factor=0.45,
@@ -107,12 +109,15 @@ class Zone(object):
                  ach_infl=0.5,
                  ventilation_efficiency=0.6,
                  thermal_capacitance_per_floor_area=165000,
-                 t_set_heating=20.0,
-                 t_set_cooling=26.0,
+                 t_set_heating_day=20.0,
+                 t_set_heating_night=16.0,
+                 t_set_cooling=25.0,
+                 summer_start_doy=121,
+                 summer_end_doy=273,
                  max_cooling_energy_per_floor_area=-float("inf"),
                  max_heating_energy_per_floor_area=float("inf"),
-                 heating_supply_system=supply_system.OilBoilerMed,
-                 cooling_supply_system=supply_system.HeatPumpAir,
+                 heating_supply_system=None,
+                 cooling_supply_system=None,
                  heating_emission_system=emission_system.NewRadiators,
                  cooling_emission_system=emission_system.AirConditioning,
                  ):
@@ -132,7 +137,7 @@ class Zone(object):
         # Calculated Properties
         self.floor_area = floor_area  # [m2] Floor Area
         # [m2] Effective Mass Area assuming a medium weight zone #12.3.1.2
-        self.mass_area = self.floor_area * 2.5
+        self.mass_area = self.floor_area * average_storey_height  #take value out of input DIN?
         self.room_vol = room_vol  # [m3] Room Volume
         self.total_internal_area = total_internal_area
         # A_t or At is defined as being the area of all surfaces facing the room.
@@ -161,8 +166,13 @@ class Zone(object):
         self.h_tr_is = self.total_internal_area * 3.45
 
         # Thermal set points
-        self.t_set_heating = t_set_heating
+        self.t_set_heating_day = t_set_heating_day
+        self.t_set_heating_night = t_set_heating_night
         self.t_set_cooling = t_set_cooling
+
+        # Fixed seasonal operation window (day-of-year, non-leap year)
+        self.summer_start_doy = int(summer_start_doy)
+        self.summer_end_doy = int(summer_end_doy)
 
         # Thermal Properties
         self.has_heating_demand = False  # Boolean for if heating is required
@@ -235,7 +245,7 @@ class Zone(object):
         else:
             self.lighting_demand = 0
 
-    def solve_energy(self, internal_gains, solar_gains, t_out, t_m_prev):
+    def solve_energy(self, internal_gains, solar_gains, t_out, t_m_prev, hour):
         """
         Calculates the heating and cooling consumption of a building for a set timestep
 
@@ -247,6 +257,8 @@ class Zone(object):
         :type t_out: float
         :param t_m_prev: Previous air temperature [C]
         :type t_m_prev: float
+        :param hour: Current hour of the day
+        :type hour: int
 
         :return: self.heating_demand, space heating demand of the building
         :return: self.heating_sys_electricity, heating electricity consumption
@@ -264,8 +276,10 @@ class Zone(object):
         """
         # Main File
 
-        # check demand, and change state of self.has_heating_demand, and self._has_cooling_demand
-        self.has_demand(internal_gains, solar_gains, t_out, t_m_prev)
+        # Determine demand state from a pure function and then update object state.
+        self.has_heating_demand, self.has_cooling_demand = self.check_demand(
+            internal_gains, solar_gains, t_out, t_m_prev, hour
+        )
 
         if not self.has_heating_demand and not self.has_cooling_demand:
 
@@ -298,64 +312,94 @@ class Zone(object):
             # has heating/cooling demand
 
             # Calculates energy_demand used below
-            self.calc_energy_demand(
-                internal_gains, solar_gains, t_out, t_m_prev)
+            self.calc_energy_demand(internal_gains, solar_gains, t_out, t_m_prev, hour)
 
             self.calc_temperatures_crank_nicolson(
-                self.energy_demand, internal_gains, solar_gains, t_out, t_m_prev)
+                self.energy_demand, internal_gains, solar_gains, t_out, t_m_prev)   #investigate why this doesn't need hour.
             # calculates the actual t_m resulting from the actual heating
             # demand (energy_demand)
 
             # Calculate the Heating/Cooling Input Energy Required
+            #
+            # supply_director = supply_system.SupplyDirector()  # Initialise Heating System Manager
+            #
+            # if self.has_heating_demand:
+            #     supply_director.set_builder(self.heating_supply_system(load=self.energy_demand,
+            #                                 t_out=t_out,
+            #                                 heating_supply_temperature=self.heating_supply_temperature,
+            #                                 cooling_supply_temperature=self.cooling_supply_temperature,
+            #                                 has_heating_demand=self.has_heating_demand,
+            #                                 has_cooling_demand=self.has_cooling_demand))
+            #     supplyOut = supply_director.calc_system()
+            #     # All Variables explained underneath line 467
+            #     self.heating_demand = self.energy_demand
+            #     self.heating_sys_electricity = supplyOut.electricity_in
+            #     self.heating_sys_fossils = supplyOut.fossils_in
+            #     self.cooling_demand = 0
+            #     self.cooling_sys_electricity = 0
+            #     self.cooling_sys_fossils = 0
+            #     self.electricity_out = supplyOut.electricity_out
+            #
+            # elif self.has_cooling_demand:
+            #     supply_director.set_builder(self.cooling_supply_system(load=self.energy_demand * (-1),
+            #                                 t_out=t_out,
+            #                                 heating_supply_temperature=self.heating_supply_temperature,
+            #                                 cooling_supply_temperature=self.cooling_supply_temperature,
+            #                                 has_heating_demand=self.has_heating_demand,
+            #                                 has_cooling_demand=self.has_cooling_demand))
+            #     supplyOut = supply_director.calc_system()
+            #     self.heating_demand = 0
+            #     self.heating_sys_electricity = 0
+            #     self.heating_sys_fossils = 0
+            #     self.cooling_demand = self.energy_demand
+            #     self.cooling_sys_electricity = supplyOut.electricity_in
+            #     self.cooling_sys_fossils = supplyOut.fossils_in
+            #     self.electricity_out = supplyOut.electricity_out
+            #
+            # self.cop = supplyOut.cop
 
-            supply_director = supply_system.SupplyDirector()  # Initialise Heating System Manager
-
+            # Disabled supply-system workflow, but keep the model runnable.
             if self.has_heating_demand:
-                supply_director.set_builder(self.heating_supply_system(load=self.energy_demand,
-                                            t_out=t_out,
-                                            heating_supply_temperature=self.heating_supply_temperature,
-                                            cooling_supply_temperature=self.cooling_supply_temperature,
-                                            has_heating_demand=self.has_heating_demand,
-                                            has_cooling_demand=self.has_cooling_demand))
-                supplyOut = supply_director.calc_system()
-                # All Variables explained underneath line 467
                 self.heating_demand = self.energy_demand
-                self.heating_sys_electricity = supplyOut.electricity_in
-                self.heating_sys_fossils = supplyOut.fossils_in
+                self.heating_sys_electricity = self.energy_demand
+                self.heating_sys_fossils = 0
                 self.cooling_demand = 0
                 self.cooling_sys_electricity = 0
                 self.cooling_sys_fossils = 0
-                self.electricity_out = supplyOut.electricity_out
-
+                self.electricity_out = 0
             elif self.has_cooling_demand:
-                supply_director.set_builder(self.cooling_supply_system(load=self.energy_demand * (-1),
-                                            t_out=t_out,
-                                            heating_supply_temperature=self.heating_supply_temperature,
-                                            cooling_supply_temperature=self.cooling_supply_temperature,
-                                            has_heating_demand=self.has_heating_demand,
-                                            has_cooling_demand=self.has_cooling_demand))
-                supplyOut = supply_director.calc_system()
                 self.heating_demand = 0
                 self.heating_sys_electricity = 0
                 self.heating_sys_fossils = 0
                 self.cooling_demand = self.energy_demand
-                self.cooling_sys_electricity = supplyOut.electricity_in
-                self.cooling_sys_fossils = supplyOut.fossils_in
-                self.electricity_out = supplyOut.electricity_out
+                self.cooling_sys_electricity = abs(self.energy_demand)
+                self.cooling_sys_fossils = 0
+                self.electricity_out = 0
 
-            self.cop = supplyOut.cop
+            self.cop = float('nan')
 
         self.sys_total_energy = self.heating_sys_electricity + self.heating_sys_fossils + \
             self.cooling_sys_electricity + self.cooling_sys_fossils
         self.heating_energy = self.heating_sys_electricity + self.heating_sys_fossils
         self.cooling_energy = self.cooling_sys_electricity + self.cooling_sys_fossils
 
-    # TODO: rename. this is expected to return a boolean. instead, it changes state??? you don't want to change state...
-    # why not just return has_heating_demand and has_cooling_demand?? then call the function "check_demand"
-    # has_heating_demand, has_cooling_demand = self.check_demand(...)
-    def has_demand(self, internal_gains, solar_gains, t_out, t_m_prev):
+    def _is_night_time(self, hour):
+        hour_of_day = hour % 24
+        #return 0 <= hour_of_day < 6 or 22 <= hour_of_day < 24
+        return 0 <= hour_of_day < 7
+
+    def _day_of_year_from_hour(self, hour):
+        return int(hour // 24) + 1
+
+    def _is_summer_season(self, day_of_year):
+        # Handles both normal and wrap-around ranges.
+        if self.summer_start_doy <= self.summer_end_doy:
+            return self.summer_start_doy <= day_of_year <= self.summer_end_doy
+        return day_of_year >= self.summer_start_doy or day_of_year <= self.summer_end_doy
+
+    def check_demand(self, internal_gains, solar_gains, t_out, t_m_prev, hour):
         """
-        Determines whether the building requires heating or cooling
+        Pure demand check that returns demand flags without mutating object state.
         Used in: solve_energy()
 
         # step 1 in section C.4.2 in [C.3 ISO 13790]
@@ -368,17 +412,44 @@ class Zone(object):
         self.calc_temperatures_crank_nicolson(
             energy_demand, internal_gains, solar_gains, t_out, t_m_prev)
 
-        # If the air temperature is less or greater than the set temperature,
-        # there is a heating/cooling load
-        if self.t_air < self.t_set_heating:
-            self.has_heating_demand = True
-            self.has_cooling_demand = False
-        elif self.t_air > self.t_set_cooling:
-            self.has_cooling_demand = True
-            self.has_heating_demand = False
+        '''
+        #calculate if heatingseason? currently working with fixes set points.
+        heating_season = hour < 2880 or hour > 6552  #set heating season for the first 120 days and staring again from day 274.
+        
+        if heating_season:
+            if self.t_air < self.t_set_heating_day:
+                self.has_heating_demand = True
+                self.has_cooling_demand = False
+            else:
+                self.has_heating_demand = False
+                self.has_cooling_demand = False
+            return        
+        '''
+        # Cooling is allowed all year; heating remains restricted to winter days.
+        day_of_year = self._day_of_year_from_hour(hour)
+        heating_allowed = not self._is_summer_season(day_of_year)
+        has_cooling_demand = self.t_air > self.t_set_cooling
+
+        if has_cooling_demand:
+            has_heating_demand = False
+        elif heating_allowed:
+            if self._is_night_time(hour):
+                has_heating_demand = self.t_air < self.t_set_heating_night
+            else:
+                has_heating_demand = self.t_air < self.t_set_heating_day
         else:
-            self.has_heating_demand = False
-            self.has_cooling_demand = False
+            has_heating_demand = False
+
+        return has_heating_demand, has_cooling_demand
+
+    def has_demand(self, internal_gains, solar_gains, t_out, t_m_prev, hour):
+        """
+        Backward-compatible wrapper that updates object state in-place.
+        Prefer using check_demand() for new code.
+        """
+        self.has_heating_demand, self.has_cooling_demand = self.check_demand(
+            internal_gains, solar_gains, t_out, t_m_prev, hour
+        )
 
     def calc_temperatures_crank_nicolson(self, energy_demand, internal_gains, solar_gains, t_out, t_m_prev):
         """
@@ -404,7 +475,7 @@ class Zone(object):
 
         return self.t_m, self.t_air, self.t_opperative
 
-    def calc_energy_demand(self, internal_gains, solar_gains, t_out, t_m_prev):
+    def calc_energy_demand(self, internal_gains, solar_gains, t_out, t_m_prev, hour):
         """
         Calculates the energy demand of the space if heating/cooling is active
         Used in: solve_energy()
@@ -424,12 +495,14 @@ class Zone(object):
         # determine if we need heating or cooling based based on the condition
         # that no heating or cooling is required
         if self.has_heating_demand:
-            t_air_set = self.t_set_heating
+            if self._is_night_time(hour):
+                t_air_set = self.t_set_heating_night
+            else:
+                t_air_set = self.t_set_heating_day
         elif self.has_cooling_demand:
             t_air_set = self.t_set_cooling
         else:
-            raise NameError(
-                'heating function has been called even though no heating is required')
+            tair_set = t_air_0  #this is just to avoid an error, this case should be caught by the first if statement in solve_energy
 
         # Set a heating case where the heating load is 10x the floor area (10
         # W/m2)

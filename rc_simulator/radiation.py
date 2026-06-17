@@ -20,21 +20,34 @@ __status__ = "production"
 
 
 class Location(object):
-    """Set the Location of the Simulation with an Energy Plus Weather File"""
+    """Set weather context for the simulation."""
 
-    def __init__(self, epwfile_path):
+    def __init__(self, weather_file_path=None, epwfile_path=None):
+
+        self.weather_data = pd.DataFrame()
+
+        # Preferred input: SimStadt weatherData.prn (direct, diffuse, ambient temperature)
+        if weather_file_path:
+            self.weather_data = pd.read_csv(
+                weather_file_path,
+                sep=r'\s+',
+                header=None,
+                names=['direct_radiation', 'diffuse_radiation', 'ambient_temperature']
+            )
+            return
 
         # Set EPW Labels and import epw file
-        epw_labels = ['year', 'month', 'day', 'hour', 'minute', 'datasource', 'drybulb_C', 'dewpoint_C', 'relhum_percent',
+        '''epw_labels = ['year', 'month', 'day', 'hour', 'minute', 'datasource', 'drybulb_C', 'dewpoint_C', 'relhum_percent',
                       'atmos_Pa', 'exthorrad_Whm2', 'extdirrad_Whm2', 'horirsky_Whm2', 'glohorrad_Whm2',
                       'dirnorrad_Whm2', 'difhorrad_Whm2', 'glohorillum_lux', 'dirnorillum_lux', 'difhorillum_lux',
                       'zenlum_lux', 'winddir_deg', 'windspd_ms', 'totskycvr_tenths', 'opaqskycvr_tenths', 'visibility_km',
                       'ceiling_hgt_m', 'presweathobs', 'presweathcodes', 'precip_wtr_mm', 'aerosol_opt_thousandths',
                       'snowdepth_cm', 'days_last_snow', 'Albedo', 'liq_precip_depth_mm', 'liq_precip_rate_Hour']
-
-        # Import EPW file
-        self.weather_data = pd.read_csv(
-            epwfile_path, skiprows=8, header=None, names=epw_labels).drop('datasource', axis=1)
+        '''
+        # Backward compatibility: EPW input remains available if provided.
+        if epwfile_path:
+            self.weather_data = pd.read_csv(
+                epwfile_path, skiprows=8, header=None, names=epw_labels).drop('datasource', axis=1)
 
     def calc_sun_position(self, latitude_deg, longitude_deg, year, hoy):
         """
@@ -139,7 +152,7 @@ class Window(object):
 
         self.solar_gains = self.incident_solar * self.glass_solar_transmittance
 
-    def calc_illuminance(self, sun_altitude, sun_azimuth, normal_direct_illuminance, horizontal_diffuse_illuminance):
+    '''def calc_illuminance(self, sun_altitude, sun_azimuth, normal_direct_illuminance, horizontal_diffuse_illuminance):
         """
         Calculates the Illuminance in the building zone through the set Window
 
@@ -166,6 +179,7 @@ class Window(object):
             direct_illuminance + diffuse_illuminance) * self.area
         self.transmitted_illuminance = self.incident_illuminance * \
             self.glass_light_transmittance
+        '''
 
     def calc_direct_solar_factor(self, sun_altitude, sun_azimuth):
         """

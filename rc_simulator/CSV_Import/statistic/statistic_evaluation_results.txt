@@ -1,0 +1,25 @@
+Statistical Evaluation Report
+
+Matched buildings used: 205
+SimStadt exact matches: 204
+SimStadt fallback matches: 1
+SimStadt source: ImBuchwald_DIN18599_HEATING_AND_COOLING.csv
+RC results directory: Rc_Hourly_Aggregated_Results
+
+Comparison                           MAPE          R²       n
+-----------------------------  ----------  ----------  ------
+SimStadt - very light heating       23.89        0.84     205
+SimStadt - very light cooling       30.66        0.61     205
+SimStadt - light heating            24.15        0.84     205
+SimStadt - light cooling            32.68        0.56     205
+SimStadt - medium heating           24.48        0.84     205
+SimStadt - medium cooling           34.63        0.51     205
+SimStadt - heavy heating            24.99        0.82     205
+SimStadt - heavy cooling            36.27        0.47     205
+SimStadt - very heavy heating       25.58        0.81     205
+SimStadt - very heavy cooling       37.37        0.44     205
+
+Notes:
+MAPE is calculated against annual SimStadt demand in percent.
+R² is calculated with SimStadt as the reference series.
+Cooling and heating rows are aligned by exact ID first, then fallback ID when needed.
